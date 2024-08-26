@@ -1,0 +1,8 @@
+# database
+db.sqlite3
+
+# macOS
+.DS_Store
+
+# sensitive information
+advising_database/settings.py 
