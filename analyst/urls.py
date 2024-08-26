@@ -7,4 +7,5 @@ urlpatterns = [
     path('organizations/ntee/<ntc>', views.orgs_by_ntee, name='analyst-organization-by-ntee-code'),
     path('organizations/ein/<ein_number>', views.orgs_by_ein, name='analyst-organization-by-ntee-code'),
     path('organizations/geography/<given_state>/<given_city>', views.orgs_by_state_city, name='analyst-organization-by-ntee-code'),
+    path('organizations/revenue/<rev_amount>', views.orgs_by_revenue, name='analyst-organization-by-revenue'),
 ]

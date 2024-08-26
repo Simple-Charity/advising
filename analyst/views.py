@@ -51,3 +51,11 @@ def orgs_cec(request):
     }
 
     return render(request, "analyst/orgs_by_ntee.html", context)
+
+def orgs_by_revenue(request,rev_amount):
+
+    context = {
+        'orgs': Organization.objects.filter(revenue_amount__gte=rev_amount).order_by('-revenue_amount')
+    }
+
+    return render(request, "analyst/orgs_by_ntee.html", context)
