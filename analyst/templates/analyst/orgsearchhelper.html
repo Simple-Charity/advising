@@ -1,0 +1,9 @@
+{% for item in orgs %}
+    <div class="isogrid-item flex">
+        <a class="text-blue-800 underline" href="/organizations/detail/{{ item.id }}">
+            <div class="w-[20rem] pr-6 text-sm name">{{ item.name }}</div>
+        </a>
+        <div class="w-[10rem] pr-6 text-sm city">{{ item.city }}</div>
+        <div class="w-[10rem] pr-6 text-sm state">{{ item.state }}</div>
+    </div>
+{% endfor %}

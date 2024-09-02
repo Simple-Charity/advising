@@ -7,13 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    {# JQuery #}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    {# Isotope CDN #}
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    
+    {# Packery CDN #}
+    <script src="https://unpkg.com/packery@2/dist/packery.pkgd.js"></script>
+
+    {# Chart.js #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    
+    {# Tiny MCE #}
+    <script src="https://cdn.tiny.cloud/1/sc1j6hviagto91a9w0kcceere1ud022f68f6om8ga99dv2lo/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
+
     {% tailwind_css %}
 </head>
-<body>
-    <div class="p-4 sm:p-6 lg:p-10">
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="p-4 sm:p-8 lg:p-14">
         {% block content %}
 
         {% endblock %}
     </div>
+
+    {% block page_specific_js %}
+
+    {% endblock %}
 </body>
 </html>

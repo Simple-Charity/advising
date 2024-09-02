@@ -1,7 +1,15 @@
 {% extends 'analyst/base.html' %}
 
 {% block content %}
-    <div class="text-4xl">
-        fdsa
+    <div class="text-2xl font-bold pb-6">
+        Welcome back, ${name}. 
+    </div>
+
+    <div class="flex">
+        <a href="/organizations/search/">
+            <div class="w-auto px-4 py-1 bg-[#263b4e] text-white text-lg border-[#263b4e] border-2 rounded-full transition duration-300 ease-in-out transform hover:bg-white hover:text-[#263b4e]">
+                Search for organizations
+            </div>
+        </a>
     </div>
 {% endblock %}

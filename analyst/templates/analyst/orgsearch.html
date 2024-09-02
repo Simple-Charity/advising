@@ -1,0 +1,102 @@
+{% extends 'analyst/base.html' %}
+
+{% block content %}
+    <div class="flex pb-4">
+
+        <form class="w-full" action="">
+            <div class="grid grid-cols-2 gap-8 w-full">
+                <div>
+                    <label for="name-filter">Name</label>
+                    <input type="text" name="name-filter"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+
+                <div>
+                    <div class="mb-4">
+                        <label for="state-filter">State</label>
+                        <select hx-post="/orgcitylister" hx-trigger="change" hx-target="#citiescontainer" hx-swap="innerHTML" name="state-filter" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="" default></option>
+                            {% for state in states %}
+                                <option value="{{state.abbreviation}}">{{state.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="city-filter">City</label>
+                        <select id="citiescontainer" name="city-filter" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                        </select>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            
+    
+            <div class="my-6 flex hover:cursor-pointer">
+                <div hx-post="/orgsearchhelper" 
+                    hx-trigger="click" 
+                    hx-target="#org-list-container" 
+                    hx-swap="innerHTML" 
+                    hx-include="[name='name-filter']"
+                    hx-vals='{"nteecode":"P82"}'
+                    class="w-auto px-4 py-1 bg-[#263b4e] text-white text-lg border-[#263b4e] border-2 rounded-full transition duration-300 ease-in-out transform hover:bg-white hover:text-[#263b4e]">
+                    Search
+                </div>
+            </div>
+        </form>
+
+        
+    </div>
+    
+
+    <div>
+        <div class="flex font-bold pb-2">
+            <div class="w-[20rem] hover:cursor-pointer" id="nameheader">Name</div>
+            <div class="w-[10rem] hover:cursor-pointer" id="cityheader">City</div>
+            <div class="w-[10rem] hover:cursor-pointer" id="stateheader">State</div>
+        </div>
+
+        <div class="isogrid" id="org-list-container">
+            
+        </div>
+    </div>
+
+    
+{% endblock %}
+
+{% block page_specific_js %}
+    <script>
+        $('.isogrid').isotope({
+            // options
+            itemSelector: '.isogrid-item',
+            layoutMode: 'fitRows',
+
+            getSortData: {
+                name: '.name',
+                city: '.city',
+                state: '.state',
+            }
+            
+        });
+
+        $("#nameheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+            $('.isogrid').isotope({sortBy: 'name'});
+        });
+
+        $("#cityheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+            $('.isogrid').isotope({sortBy: 'city'});
+        });
+
+        $("#stateheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+            $('.isogrid').isotope({sortBy: 'state'});
+        });
+
+        document.addEventListener('htmx:afterRequest', function(evt) {
+            
+        });
+
+    </script>
+{% endblock %}
