@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from .models import *
-import json
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 
@@ -8,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 def home(request):
 
     context = {
-
     }
 
     return render(request, "analyst/home.html", context)

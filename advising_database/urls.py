@@ -6,6 +6,7 @@ from django.contrib.auth import views
 
 urlpatterns = [
     path('', include("analyst.urls")),
+    path('projects/', include("projects.urls")),
     path('accounts/login/', views.LoginView.as_view(), name='login'),
     path('admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

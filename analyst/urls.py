@@ -9,3 +9,4 @@ urlpatterns = [
     path('organizations/search/', views.org_search, name='analyst-organization-search'),
     path('systemstatus/', views.system_status, name='site-system-status'),
 ]
+ 

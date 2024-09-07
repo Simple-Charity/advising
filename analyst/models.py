@@ -17,6 +17,8 @@ class City(models.Model):
 
     def __str__(self):
         return self.name + ", " + self.state.name
+    
+
 
 class Organization(models.Model):
     ein = models.CharField(max_length=9)
