@@ -1,83 +1,10 @@
 from django.shortcuts import render
 from .models import *
 import json
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
-abbreviations = [
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#States.
-    "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "IA",
-    "ID", "IL", "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO",
-    "MS", "MT", "NC", "ND", "NE", "NH", "NJ", "NM", "NV", "NY", "OH", "OK",
-    "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI",
-    "WV", "WY",
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#Federal_district.
-    "DC",
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#Inhabited_territories.
-    "AS", "GU", "MP", "PR", "VI",
-]
-
-abbreviation_to_name = {
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#States.
-    "AK": "Alaska",
-    "AL": "Alabama",
-    "AR": "Arkansas",
-    "AZ": "Arizona",
-    "CA": "California",
-    "CO": "Colorado",
-    "CT": "Connecticut",
-    "DE": "Delaware",
-    "FL": "Florida",
-    "GA": "Georgia",
-    "HI": "Hawaii",
-    "IA": "Iowa",
-    "ID": "Idaho",
-    "IL": "Illinois",
-    "IN": "Indiana",
-    "KS": "Kansas",
-    "KY": "Kentucky",
-    "LA": "Louisiana",
-    "MA": "Massachusetts",
-    "MD": "Maryland",
-    "ME": "Maine",
-    "MI": "Michigan",
-    "MN": "Minnesota",
-    "MO": "Missouri",
-    "MS": "Mississippi",
-    "MT": "Montana",
-    "NC": "North Carolina",
-    "ND": "North Dakota",
-    "NE": "Nebraska",
-    "NH": "New Hampshire",
-    "NJ": "New Jersey",
-    "NM": "New Mexico",
-    "NV": "Nevada",
-    "NY": "New York",
-    "OH": "Ohio",
-    "OK": "Oklahoma",
-    "OR": "Oregon",
-    "PA": "Pennsylvania",
-    "RI": "Rhode Island",
-    "SC": "South Carolina",
-    "SD": "South Dakota",
-    "TN": "Tennessee",
-    "TX": "Texas",
-    "UT": "Utah",
-    "VA": "Virginia",
-    "VT": "Vermont",
-    "WA": "Washington",
-    "WI": "Wisconsin",
-    "WV": "West Virginia",
-    "WY": "Wyoming",
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#Federal_district.
-    "DC": "District of Columbia",
-    # https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States#Inhabited_territories.
-    "AS": "American Samoa",
-    "GU": "Guam GU",
-    "MP": "Northern Mariana Islands",
-    "PR": "Puerto Rico PR",
-    "VI": "U.S. Virgin Islands",
-}
-
-# Create your views here.
+@login_required
 def home(request):
 
     context = {
@@ -86,97 +13,135 @@ def home(request):
 
     return render(request, "analyst/home.html", context)
 
+@login_required
 def org_detail(request,oid):
 
+    org = Organization.objects.get(id=oid)
+
     context = {
-        'org': Organization.objects.get(id=oid),
+        'org': org,
+        'search_string': "https://www.google.com/search?q=" + "+".join(org.name.split(" ")) + "+" + org.city + "+" + org.state,
     }
 
     return render(request, "analyst/orgdetail.html", context)
 
+@login_required
 def org_search(request):
 
     context = {
         'states': [{
-            'name': abbreviation_to_name[a],
-            'abbreviation': a,
-        } for a in abbreviations ]
+            'name': a.name,
+            'abbreviation': a.postal_code,
+        } for a in State.objects.all() ]
     }
 
     return render(request, "analyst/orgsearch.html", context)
 
+@login_required
 def org_citylister(request):
+    state = request.POST.get('state-filter')
     context = {
-        'cities':sorted(set(org.city for org in Organization.objects.filter(state=request.POST.get('state-filter')))),
+        'cities':sorted([city.name for city in State.objects.get(postal_code = state).city_set.all()]), # type: ignore
     }
 
     return render(request, "analyst/cityoutput.html", context)
 
+@login_required
 def org_searchhelper(request):
 
     orgs = Organization.objects.all()
-    if not request.POST.get('name-filter') == "":
+    if request.POST.get('name-filter'):
         orgs = orgs.filter(name__contains=request.POST.get('name-filter'))
-    if not request.POST.get('state-filter') == "":
+    if request.POST.get('state-filter'):
         orgs = orgs.filter(state=request.POST.get('state-filter'))
-    if not request.POST.get('city-filter') == "":
+    if request.POST.get('city-filter'):
         orgs = orgs.filter(city=request.POST.get('city-filter'))
+
+    if request.POST.get('categorical-filter'):
+        stype = request.POST.get('categorical-filter-options')
+        modality = request.POST.get('categorical-filter-modalities')
+
+        if stype == "nteecode":
+            codes = [txt.strip() for txt in str(request.POST.get('categorical-filter')).split(",")]
+            if modality == "isexactly":
+                temp_orgs = Organization.objects.none()
+                for code in codes:
+                    temp_orgs = temp_orgs | orgs.filter(ntee_code__iexact=code)
+                orgs = temp_orgs
+
+                print(orgs)
+
+            elif modality == "includes":
+                temp_orgs = Organization.objects.none()
+                for code in codes:
+                    temp_orgs = temp_orgs | orgs.filter(ntee_code__contains=code)
+                orgs = temp_orgs
+
+            elif modality == "doesnotinclude":
+                for code in codes:
+                    orgs = orgs.filter(~Q(ntee_code__contains=code))
+
+        elif stype == "activitycode":
+            codes = [txt.strip() for txt in str(request.POST.get('categorical-filter')).split(",")]
+            if modality == "isexactly":
+                temp_orgs = Organization.objects.none()
+                for code in codes:
+                    temp_orgs = temp_orgs | orgs.filter(activity_codes__iexact=code)
+                orgs = temp_orgs
+
+            elif modality == "includes":
+                temp_orgs = Organization.objects.none()
+                for code in codes:
+                    temp_orgs = temp_orgs | orgs.filter(activity_codes__contains=code)
+                orgs = temp_orgs
+
+            elif modality == "doesnotinclude":
+                temp_orgs = Organization.objects.none()
+                for code in codes:
+                    orgs = orgs.filter(~Q(activity_codes__contains=code))
+                orgs = temp_orgs
+        
+
+
+    if request.POST.get('quantitative-filter'):
+        stype = request.POST.get('quantitative-filter-options')
+        modality = request.POST.get('quantitative-filter-modalities')
+        amount = request.POST.get('quantitative-filter')
+
+        if stype == 'revenue':
+            if modality == 'isgreaterthan':
+                orgs = orgs.filter(revenue_amount__gt=amount)
+            elif modality == 'islessthan':
+                orgs = orgs.filter(revenue_amount__lt=amount)
+            elif modality == 'isexactly':
+                orgs = orgs.filter(revenue_amount=amount)
+        elif stype == 'assets':
+            if modality == 'isgreaterthan':
+                orgs = orgs.filter(assets_amount__gt=amount)
+            elif modality == 'islessthan':
+                orgs = orgs.filter(assets_amount__lt=amount)
+            elif modality == 'isexactly':
+                orgs = orgs.filter(assets_amount=amount)
+        elif stype == 'income':
+            if modality == 'isgreaterthan':
+                orgs = orgs.filter(income_amount__gt=amount)
+            elif modality == 'islessthan':
+                orgs = orgs.filter(income_amount__lt=amount)
+            elif modality == 'isexactly':
+                orgs = orgs.filter(income_amount=amount)
 
     context = {
         'message': request.POST.get('name-search-box'),
-        'orgs': orgs,
+        'orgs': orgs.order_by('name'),
 
     }
 
     return render(request, "analyst/orgsearchhelper.html", context)
 
-def orgs_by_ntee(request,ntc):
+def system_status(request):
 
     context = {
-        'orgs': Organization.objects.filter(ntee_code=ntc).order_by('-revenue_amount')
+
     }
 
-    return render(request, "analyst/orgs_by_ntee.html", context)
-
-def orgs_by_state_city(request,given_state,given_city):
-
-    context = {
-        'orgs': Organization.objects.filter(state=given_state, city=given_city).order_by('-revenue_amount')
-    }
-
-    return render(request, "analyst/orgs_by_ntee.html", context)
-
-def orgs_by_ein(request,ein_number):
-
-    context = {
-        'org': Organization.objects.get(ein=ein_number)
-    }
-
-    return render(request, "analyst/orgs_by_ein.html", context)
-
-def orgs_cec(request):
-
-    child_portfolio = ['A52','E86','G25','G61','G84','G98','H25','H61','H84','H98','I21','I70','I72','K30','N20','N30','N32','O01','O02','O05','O11','O12','O19','O20','O21','O22','O23','O30','O31','O40','O41','O42','O43','O50','O51','O52','O53','O54','O55','O99','P30','P31','P32','P33','P40','P42','P43','P45','P46','P76','R28',]
-    states = ["AR","TN","SC","NC","VA","WV","KY","IN","OH","MD","DE"]
-
-    orgs = Organization.objects.filter(ntee_code__in=child_portfolio).filter(state__in=states)
-    orgs = orgs | Organization.objects.filter(name__contains='child').filter(state__in=states) 
-    orgs = orgs | Organization.objects.filter(name__contains='foster').filter(state__in=states) 
-    orgs = orgs | Organization.objects.filter(name__contains='orphan').filter(state__in=states) 
-    orgs = orgs | Organization.objects.filter(name__contains='youth').filter(state__in=states) 
-    orgs = orgs.filter(revenue_amount__gte=1000000)
-    orgs = orgs.order_by('-revenue_amount')
-
-    context = {
-        'orgs': orgs,
-    }
-
-    return render(request, "analyst/orgs_by_ntee.html", context)
-
-def orgs_by_revenue(request,rev_amount):
-
-    context = {
-        'orgs': Organization.objects.filter(revenue_amount__gte=rev_amount).order_by('-revenue_amount')
-    }
-
-    return render(request, "analyst/orgs_by_ntee.html", context)
+    return render(request, 'analyst/systemstatus.html')

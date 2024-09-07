@@ -1,6 +1,22 @@
 from django.db import models
+import datetime
 
-# Create your models here.
+class State(models.Model):
+    name = models.CharField(max_length=63)
+    postal_code = models.CharField(max_length=2)
+
+    def __str__(self):
+        return self.name
+
+class City(models.Model):
+    name = models.CharField(max_length=127)
+    state = models.ForeignKey(
+        State, 
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name + ", " + self.state.name
 
 class Organization(models.Model):
     ein = models.CharField(max_length=9)
@@ -10,6 +26,14 @@ class Organization(models.Model):
     country = models.CharField(max_length=63)
     indicator = models.CharField(max_length=15)
 
+    hq_city = models.ForeignKey(
+        City,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    last_updated = models.DateTimeField(blank=True, null=True)
 
     careofname = models.CharField(max_length=255, blank=True, null=True)
     revenue_amount = models.IntegerField(blank=True, null=True)
@@ -42,76 +66,8 @@ class Organization(models.Model):
     latest_object_id = models.CharField(max_length=255, blank=True, null=True)
     ntee_code = models.CharField(max_length=255, blank=True, null=True)
 
-# class FiscalYear(models.Model):
-#     year = models.CharField(max_length=4)
-#     formtype = models.CharField(max_length=2)
-#     pdf_url = models.CharField(max_length=511)
-#     last_updated = models.CharField(max_length=511)
-
-#     revenue = models.IntegerField()
-#     total_functional_expenses = models.IntegerField()
-#     total_assets_end = models.IntegerField()
-#     total_liabilities_end = models.IntegerField()
-    
-#     tax_period = models.CharField(max_length=15)
-#     subseccd = models.CharField(max_length=15)
-#     unrelbusinccd = models.CharField(max_length=15)
-#     initiation_fees = models.CharField(max_length=15)
-#     grsrcptspublicuse = models.CharField(max_length=15)
-#     grsincmembers = models.CharField(max_length=15)
-#     grsincother = models.CharField(max_length=15)
-
-#     totcntrbgfts = models.IntegerField()
-#     totprgmrevnue = models.IntegerField()
-#     invstmntinc = models.IntegerField()
-#     txexmptbndsproceeds = models.IntegerField()
-#     royaltsinc = models.IntegerField()
-#     grsrntsreal = models.IntegerField()
-#     grsrntsprsnl = models.IntegerField()
-#     rntlexpnsreal = models.IntegerField()
-#     rntlexpnsprsnl = models.IntegerField()
-#     rntlincreal = models.IntegerField()
-#     rntlincprsnl = models.IntegerField()
-#     netrntlinc = models.IntegerField()
-#     grsalesecur = models.IntegerField()
-#     grsalesothr = models.IntegerField()
-#     cstbasisecur = models.IntegerField()
-#     cstbasisothr = models.IntegerField()
-#     gnlsecur = models.IntegerField()
-#     gnlsothr = models.IntegerField()
-#     netgnls = models.IntegerField()
-#     grsincfndrsng = models.IntegerField()
-#     lessdirfndrsng = models.IntegerField()
-#     netincfndrsng = models.IntegerField()
-#     grsincgaming = models.IntegerField()
-#     lessdirgaming = models.IntegerField()
-#     netincgaming = models.IntegerField()
-#     grsalesinvent = models.IntegerField()
-#     lesscstofgoods = models.IntegerField()
-#     netincsales = models.IntegerField()
-#     miscrevtot11e = models.IntegerField()
-#     compnsatncurrofcr = models.IntegerField()
-#     othrsalwages = models.IntegerField()
-#     payrolltx = models.IntegerField()
-#     profndraising = models.IntegerField()
-#     txexmptbndsend = models.IntegerField()
-#     secrdmrtgsend = models.IntegerField()
-#     unsecurednotesend = models.IntegerField()
-#     retainedearnend = models.IntegerField()
-#     totnetassetend = models.IntegerField()
-
-#     nonpfrea = models.CharField(max_length=15)
-
-#     gftgrntsrcvd170 = models.IntegerField()
-#     txrevnuelevied170 = models.IntegerField()
-#     srvcsval170 = models.IntegerField()
-#     grsinc170 = models.IntegerField()
-#     grsrcptsrelated170 = models.IntegerField()
-#     totgftgrntrcvd170 = models.IntegerField()
-#     totgftgrntrcvd509 = models.IntegerField()
-#     totgftgrntrcvd509 = models.IntegerField()
-#     grsrcptsadmissn509 = models.IntegerField()
-#     txrevnuelevied509 = models.IntegerField()
-#     srvcsval509 = models.IntegerField()
-#     subtotsuppinc509 = models.IntegerField()
-#     totsupp509 = models.IntegerField()
+    def __str__(self):
+        if self.hq_city:
+            return self.name + " (" + self.hq_city.name + ", " + self.hq_city.state.postal_code + ")"
+        else:
+            return self.name

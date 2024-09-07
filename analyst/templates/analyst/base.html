@@ -1,4 +1,5 @@
 {% load static tailwind_tags %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +11,10 @@
     {# JQuery #}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    {# HTMX #}
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+
     {# Isotope CDN #}
     <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
     
@@ -30,10 +34,51 @@
     {% tailwind_css %}
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="p-4 sm:p-8 lg:p-14">
-        {% block content %}
+    <div class="">
 
-        {% endblock %}
+        <div class="p-4 sm:p-6 lg:p-10 min-h-screen">
+            <header>
+                <div class="flex items-center justify-between mb-10">
+                    <div class="flex items-center justify-start">
+                        <a href="/">
+                            <div class="w-[10rem] mr-8">
+                                <img src="{% static 'analyst/SC_secondary.png' %}" alt="">
+                            </div>
+                        </a>
+                        
+                        <a href="/organizations/search">
+                            <div class="text-md mr-6">
+                                Organizations
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div>
+                        <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <img src="{% static 'analyst/andrew.jpg' %}" alt="">
+                        </div>
+                    </div>
+                </div>
+            </header>
+    
+            {% block content %}
+    
+            {% endblock %}
+        </div>
+
+        <div class="text-white p-4 sm:p-6 lg:p-10  bg-[#031928]" id='footer'>
+            <div class="text-xl font-bold pb-10">
+                Simple Charity Advising Database
+            </div>
+
+            <a href="/systemstatus">
+                <div class="text-md">
+                    System Status
+                </div>
+            </a>
+        </div>
+
+        
     </div>
 
     {% block page_specific_js %}

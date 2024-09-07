@@ -7,11 +7,11 @@
             <div class="grid grid-cols-2 gap-8 w-full">
                 <div>
                     <label for="name-filter">Name</label>
-                    <input type="text" name="name-filter"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    <input type="text" name="name-filter" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                 </div>
 
-                <div>
-                    <div class="mb-4">
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <div class="">
                         <label for="state-filter">State</label>
                         <select hx-post="/orgcitylister" hx-trigger="change" hx-target="#citiescontainer" hx-swap="innerHTML" name="state-filter" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                             <option value="" default></option>
@@ -21,51 +21,145 @@
                         </select>
                     </div>
                     
-                    <div>
+                    <div class="">
                         <label for="city-filter">City</label>
                         <select id="citiescontainer" name="city-filter" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                         </select>
                     </div>
                     
                 </div>
+
+                <div>
+                    <label for="name-filter">
+                        <select class="border-0" name="categorical-filter-options" id="">
+                            <option value="nteecode" default>NTEE Code</option>
+                            <option value="activitycode" default>Activity Code</option>
+                        </select>
+
+                        <select class="border-0" name="categorical-filter-modalities" id="" placeholder="d">
+                            <option value="isexactly" default>Is exactly</option>
+                            <option value="includes" default>Includes</option>
+                            <option value="doesnotinclude" default>Does not include</option>
+
+                        </select>
+                    </label>
+                    <input placeholder="Separate multiple values with commas" type="text" name="categorical-filter"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
+
+                <div>
+                    <label for="name-filter">
+                        <select class="border-0" name="quantitative-filter-options" id="">
+                            <option value="revenue" default>Revenue</option>
+                            <option value="assets" default>Assets</option>
+                            <option value="income" default>Income</option>
+                        </select>
+
+                        <select class="border-0" name="quantitative-filter-modalities" id="">
+                            <option value="isgreaterthan" default>Is greater than</option>
+                            <option value="islessthan" default>Is less than</option>
+                            <option value="isexactly" default>Is exactly</option>
+                        </select>
+                    </label>
+                    <input type="text" name="quantitative-filter"  class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                </div>
             </div>
             
             
     
-            <div class="my-6 flex hover:cursor-pointer">
+            <div id="searchbutton" class="my-6 flex hover:cursor-pointer">
                 <div hx-post="/orgsearchhelper" 
                     hx-trigger="click" 
                     hx-target="#org-list-container" 
-                    hx-swap="innerHTML" 
-                    hx-include="[name='name-filter']"
-                    hx-vals='{"nteecode":"P82"}'
+                    hx-swap="outerHTML" 
+                    hx-indicator="#spinner"
                     class="w-auto px-4 py-1 bg-[#263b4e] text-white text-lg border-[#263b4e] border-2 rounded-full transition duration-300 ease-in-out transform hover:bg-white hover:text-[#263b4e]">
                     Search
                 </div>
             </div>
         </form>
+    </div>
 
+    <hr class="pb-6">
+
+    <div class="grid grid-cols-10 font-bold pb-2">
+        <div class="col-span-4 flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="nameheader">
+                Name
+            </div>
+            <div id="namearrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+        <div class="flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="cityheader">
+                City
+            </div>
+            <div id="cityarrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+        <div class="flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="stateheader">
+                State
+            </div>
+            <div id="statearrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+        <div class="flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="nteeheader">
+                NTEE
+            </div>
+            <div id="nteearrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+        <div class="col-span-2 flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="revenueheader">
+                Revenue
+            </div>
+            <div id="revenuearrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+        <div class="flex items-center">
+            <div class="columnheader hover:cursor-pointer pr-2" id="einheader">
+                EIN
+            </div>
+            <div id="einarrow" class="arrow transition duration-300 ease-in-out transform">›</div>
+        </div> 
+
+
+
+    </div>
+    
+    <div class="relative">
+        <div class="isogrid" id="org-list-container">
+        
+        </div>
+        <div class="flex justify-center">
+            <div id="spinner" class="absolute left-[50%] translate-x-[-50%] top-10 loader htmx-indicator w-20 h-20 mt-20">
+
+            </div>
+        </div>
         
     </div>
     
 
-    <div>
-        <div class="flex font-bold pb-2">
-            <div class="w-[20rem] hover:cursor-pointer" id="nameheader">Name</div>
-            <div class="w-[10rem] hover:cursor-pointer" id="cityheader">City</div>
-            <div class="w-[10rem] hover:cursor-pointer" id="stateheader">State</div>
-        </div>
-
-        <div class="isogrid" id="org-list-container">
-            
-        </div>
-    </div>
-
-    
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+    </style>
 {% endblock %}
 
 {% block page_specific_js %}
     <script>
+
+        
         $('.isogrid').isotope({
             // options
             itemSelector: '.isogrid-item',
@@ -75,27 +169,85 @@
                 name: '.name',
                 city: '.city',
                 state: '.state',
+                ntee: '.ntee',
+                revenue: '.revenue parseInt',
+                ein: '.ein',
+                
             }
             
         });
 
+        $('.columnheader').on('click', function() {
+            $('.isogrid').isotope({
+                // options
+                itemSelector: '.isogrid-item',
+                layoutMode: 'fitRows',
+    
+                getSortData: {
+                    name: '.name',
+                    city: '.city',
+                    state: '.state',
+                    ntee: '.ntee',
+                    revenue: '.revenue parseInt',
+                    ein: '.ein',
+                    
+                }
+                
+            });
+        });
+
         $("#nameheader").on("click", function() {
             $('.isogrid').isotope('reloadItems');
-            $('.isogrid').isotope({sortBy: 'name'});
+
+            $('.arrow').removeClass('rotate-90');
+            $('#namearrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'name', sortAscending: true});
         });
 
         $("#cityheader").on("click", function() {
             $('.isogrid').isotope('reloadItems');
-            $('.isogrid').isotope({sortBy: 'city'});
+
+            $('.arrow').removeClass('rotate-90');
+            $('#cityarrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'city', sortAscending: true});
         });
 
         $("#stateheader").on("click", function() {
             $('.isogrid').isotope('reloadItems');
-            $('.isogrid').isotope({sortBy: 'state'});
+
+            $('.arrow').removeClass('rotate-90');
+            $('#statearrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'state', sortAscending: true});
         });
 
-        document.addEventListener('htmx:afterRequest', function(evt) {
-            
+        $("#nteeheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+
+            $('.arrow').removeClass('rotate-90');
+            $('#nteearrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'ntee', sortAscending: true});
+        });
+
+        $("#revenueheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+
+            $('.arrow').removeClass('rotate-90');
+            $('#revenuearrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'revenue', sortAscending: false} );
+        });
+
+        $("#einheader").on("click", function() {
+            $('.isogrid').isotope('reloadItems');
+
+            $('.arrow').removeClass('rotate-90');
+            $('#einarrow').toggleClass('rotate-90');
+
+            $('.isogrid').isotope({sortBy: 'ein', sortAscending: true} );
         });
 
     </script>

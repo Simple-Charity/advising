@@ -1,9 +1,24 @@
-{% for item in orgs %}
-    <div class="isogrid-item flex">
-        <a class="text-blue-800 underline" href="/organizations/detail/{{ item.id }}">
-            <div class="w-[20rem] pr-6 text-sm name">{{ item.name }}</div>
-        </a>
-        <div class="w-[10rem] pr-6 text-sm city">{{ item.city }}</div>
-        <div class="w-[10rem] pr-6 text-sm state">{{ item.state }}</div>
-    </div>
-{% endfor %}
+{% load analyst_extras %}
+
+<div class="isogrid" id="org-list-container">
+    {% for item in orgs %}
+        <div class="isogrid-item w-full grid grid-cols-10 py-2  hover:bg-gray-100">
+            <a class="col-span-4 text-blue-800 underline" target="_blank" href="/organizations/detail/{{ item.id }}">
+                <div class="text-sm name pr-4">{{ item.name }}</div>
+            </a>
+            <div class="text-sm city pr-4">{{ item.city }}</div>
+            <div class="text-sm state pr-4">{{ item.state }}</div>
+            <div class="text-sm ntee pr-4">{{ item.ntee_code }}</div>
+            <div class="col-span-2 text-sm pr-4">{{ item.revenue_amount|currency }}</div>
+            <div class="hidden revenue">
+                {% if item.revenue_amount == None %}
+                    -1000000
+                {% else %}
+                    {{ item.revenue_amount }}
+                {% endif %}
+            </div>
+            <div class="text-sm ein">{{ item.ein }}</div>
+            
+        </div>
+    {% endfor %}
+</div>
