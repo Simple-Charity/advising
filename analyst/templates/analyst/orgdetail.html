@@ -18,5 +18,43 @@
         <div class="text-lg">Google Search →</div>
     </a>
 
-    <a href="Vantage+Leadership+Initiative"></a>
+    <hr class="my-6">
+
+    <div class="">
+        <div class="paragraph-1 font-bold">Projects</div>
+
+        {% for project in all_projects %}
+            <a href="{% url 'site-projects-entry' pid=project.id %}">
+                <div class="paragraph-2 text-blue-800 underline">{{ project.name }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <form action="">
+        <div class="mt-10 flex items-center">
+            <div class="paragraph-1 mr-4">Add to Project:</div>
+            <select class="w-[20rem] search-box-1 mr-4" name="projectselect" id="">
+                <option value="" default></option>
+
+                {% for project in all_projects %}
+                    <option class="" value="{{ project.name }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+
+            <input name="org_id" class="hidden" value="{{org.id}}">
+
+            <div class="white-on-midnight-button" 
+                hx-post="/helpers/add-org-to-project/" 
+                hx-trigger="click" 
+                hx-target="#addedindicator" 
+                hx-swap="innerHTML">
+                Submit
+            </div>
+        </div>
+    </form>
+
+    <div class="mt-2" id="addedindicator">
+
+    </div>
+
 {% endblock %}

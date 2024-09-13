@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from projects.models import *
 
 @login_required
 def home(request):
@@ -19,6 +20,7 @@ def org_detail(request,oid):
     context = {
         'org': org,
         'search_string': "https://www.google.com/search?q=" + "+".join(org.name.split(" ")) + "+" + org.city + "+" + org.state,
+        'all_projects': Project.objects.all().order_by('name'),
     }
 
     return render(request, "analyst/orgdetail.html", context)
@@ -143,3 +145,19 @@ def system_status(request):
     }
 
     return render(request, 'analyst/systemstatus.html')
+
+@login_required
+def project_helper_add_org_to_project(request):
+
+    active_project = Project.objects.get(name = request.POST.get('projectselect'))
+    active_org = Organization.objects.get(id = request.POST.get('org_id'))
+
+    active_org.projects.add(active_project)
+    active_org.save()
+
+
+    context = {
+
+    }
+
+    return render(request, 'analyst/htmxhelpers/add_org_to_project.html', context)

@@ -8,6 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
+    {# Google Fonts #}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     {# JQuery #}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -46,9 +52,15 @@
                             </div>
                         </a>
                         
-                        <a href="/organizations/search">
-                            <div class="text-md mr-6">
+                        <a href="{% url 'analyst-organization-search' %}">
+                            <div class="menu-header">
                                 Organizations
+                            </div>
+                        </a>
+
+                        <a href="{% url 'site-projects-index' %}">
+                            <div class="menu-header">
+                                Projects
                             </div>
                         </a>
                     </div>
@@ -66,20 +78,22 @@
             {% endblock %}
         </div>
 
-        <div class="text-white p-4 sm:p-6 lg:p-10  bg-[#031928]" id='footer'>
+        <div class="text-white p-4 sm:p-6 lg:p-10  bg-midnight" id='footer'>
             <div class="text-xl font-bold pb-10">
                 Simple Charity Advising Database
             </div>
 
             <a href="/systemstatus">
-                <div class="text-md">
+                <div class="">
                     System Status
                 </div>
             </a>
         </div>
-
-        
     </div>
+        
+    {% block page_specific_css %}
+
+    {% endblock %}
 
     {% block page_specific_js %}
 

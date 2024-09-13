@@ -8,5 +8,6 @@ urlpatterns = [
     path('organizations/detail/<oid>/', views.org_detail, name='analyst-organization-detail'),
     path('organizations/search/', views.org_search, name='analyst-organization-search'),
     path('systemstatus/', views.system_status, name='site-system-status'),
+    path('helpers/add-org-to-project/', views.project_helper_add_org_to_project, name='site-project-helper-add-org-to-project'),
 ]
- 
+  

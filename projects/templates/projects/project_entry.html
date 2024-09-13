@@ -1,0 +1,18 @@
+{% extends 'analyst/base.html' %}
+
+{% block content %}
+    
+    <div class="paragraph-1 font-bold mb-4">{{ project.name }}</div>
+
+    <div>
+        {% for org in orgs %}
+            <a href="{% url 'analyst-organization-detail' oid=org.id %}">
+                <div class="paragraph-2 text-blue-800 underline mb-2">
+                    {{ org.name }}
+                </div>
+            </a>
+
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -42,7 +42,29 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
-        extend: {},
+        fontFamily: {
+            // Default sequences
+            'serif': ['DM Serif Text','EB Garamond','ui-serif'],
+            'sans': ['Work Sans','Nunito Sans','ui-sans-serif'],
+            // Simple Charity fonts
+            'garamond': ['EB Garamond'],
+            'nunito': ['Nunito Sans'],
+            'dmserif': ['DM Serif Text'],
+            'work': ['Work Sans'],
+        },
+        extend: {
+            colors: {
+                'coral': '#ff7f50',
+                'apricot': '#ffb78f',
+                'cream': '#fae1c8',
+                'dusk': '#263b4e',
+                'midnight': '#031928',
+                'cloud': '#f0f0f0',
+                'zeal': '#098c93',
+                'canary': '#ffc32e',
+                'mint': '#c6e0c5',
+            },
+        },
     },
     plugins: [
         /**

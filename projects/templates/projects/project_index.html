@@ -1,0 +1,25 @@
+{% extends 'analyst/base.html' %}
+
+{% block content %}
+    
+    <div class="mb-10">
+        {% for project in projects %}
+        <div class="mb-2">
+            <a href="{% url 'site-projects-entry' pid=project.id %}">
+                <div class="title-2 text-blue-800 underline">
+                    {{ project.name }}
+                </div>
+            </a>
+
+            <div>{{ project.organization_set.count }} Organizations</div>
+        </div>
+            
+        {% endfor %}
+    </div>
+    
+
+    <div>
+        <div class="w-min midnight-on-white-button">New +</div>
+    </div>
+
+{% endblock %}

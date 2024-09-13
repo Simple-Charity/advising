@@ -1,6 +1,8 @@
 from django.db import models
 import datetime
 
+from projects.models import *
+
 class State(models.Model):
     name = models.CharField(max_length=63)
     postal_code = models.CharField(max_length=2)
@@ -17,7 +19,7 @@ class City(models.Model):
 
     def __str__(self):
         return self.name + ", " + self.state.name
-    
+     
 
 
 class Organization(models.Model):
@@ -34,6 +36,8 @@ class Organization(models.Model):
         blank=True,
         null=True,
     )
+
+    projects = models.ManyToManyField(Project)
 
     last_updated = models.DateTimeField(blank=True, null=True)
 
